@@ -1,0 +1,2829 @@
+{
+    "openapi":"3.0.3",
+    "info": {
+      "title":"Scaffolding (MCCreations API)",
+      "version":"2.0.0",
+      "description": "Scaffolding is the API that powers the MCCreations website behind the scenes. \n ## WIP \n This documentation is heavily work in progress. While most routes are at least listed, parameters and return types are not exact and many things require more explanation. Please be patient as we work on improving this resource. \n ## Authentication \n The API currently only has one option for authentication, userJWTs. You can get a userJWT from the /auth/sign_in endpoint, however widespread use of these codes is not recommended (and as such they are not documented here). A system for creating more secure PATs is planned for the future. \n Once you have a userJWT, you can pass it to your requests using the Authorization header. \n\n Most requests don't need authorization, however things like modifying data or accessing private information will require it."
+    },
+    "servers": [
+      {"url":"https://api.mccreations.net/"}
+    ],
+    "tags": [
+        {
+            "name": "comments",
+            "description": "Comments"
+        },
+        {
+            "name": "creations",
+            "description": "Creations"
+        },
+        {
+            "name": "creators",
+            "description": "Creators"
+        },
+        {
+            "name": "forums",
+            "description": "Forums"
+        },
+        {
+            "name": "leaderboards",
+            "description": "Leaderboards"
+        },
+        {
+            "name": "marketplace",
+            "description": "Marketplace"
+        },
+        {
+            "name": "notifications",
+            "description": "Notifications"
+        },
+        {
+            "name": "reports",
+            "description": "Reports"
+        },
+        {
+            "name": "storage",
+            "description": "Storage"
+        },
+        {
+            "name": "translation",
+            "description": "Translation"
+        },
+        {
+            "name": "user",
+            "description": "User"
+        }
+    ],
+    "components": {
+        "responses": {
+            "ErrorSchema": {
+                "description": "An error occurred",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "CommentContentType": {
+                "type": "string",
+                "enum": [
+                    "maps",
+                    "datapacks",
+                    "resourcepacks",
+                    "wall"
+                ]
+            },
+            "SearchContentType": {
+                "type": "string",
+                "enum": [
+                    "maps",
+                    "datapacks",
+                    "resourcepacks",
+                    "marketplace",
+                    "all",
+                    "content"
+                ]
+            },
+            "ContentType": {
+                "type": "string",
+                "enum": [
+                    "map",
+                    "datapack",
+                    "resourcepack",
+                    "marketplace"
+                ]
+            },
+            "CollectionName": {
+                "type": "string",
+                "enum": [
+                    "Maps",
+                    "datapacks",
+                    "resourcepacks",
+                    "marketplace"
+                ]
+            },
+            "Comment": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "handle": {
+                        "type": "string"
+                    },
+                    "comment": {
+                        "type": "string"
+                    },
+                    "createdDate": {
+                        "type": "number"
+                    },
+                    "updatedDate": {
+                        "type": "number"
+                    },
+                    "approved": {
+                        "type": "boolean"
+                    },
+                    "content_type": {
+                        "$ref": "#/components/schemas/CommentContentType"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "likes": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Creation": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "map",
+                            "datapack",
+                            "resourcepack",
+                            "marketplace"
+                        ]
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "number"
+                    },
+                    "ratings": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "createdDate": {
+                        "type": "number"
+                    },
+                    "updatedDate": {
+                        "type": "number"
+                    },
+                    "views": {
+                        "type": "number"
+                    },
+                    "downloads": {
+                        "type": "number"
+                    },
+                    "shortDescription": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "videoUrl": {
+                        "type": "string"
+                    },
+                    "creators": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "type": "string"
+                                },
+                                "handle": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "extraFeatures": {
+                        "type": "object",
+                        "properties": {
+                            "leaderboards": {
+                                "type": "object",
+                                "properties": {
+                                    "use": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "url": {
+                                    "type": "string"
+                                },
+                                "worldUrl": {
+                                    "type": "string"
+                                },
+                                "resourceUrl": {
+                                    "type": "string"
+                                },
+                                "dataUrl": {
+                                    "type": "string"
+                                },
+                                "minecraftVersion": {
+                                    "type": "string"
+                                },
+                                "contentVersion": {
+                                    "type": "string"
+                                },
+                                "changelog": {
+                                    "type": "string"
+                                },
+                                "extraFiles": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string"
+                                            },
+                                            "url": {
+                                                "type": "string"
+                                            },
+                                            "required": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                },
+                                "createdDate": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "importedUrl": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "number"
+                    },
+                    "owner": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Creator": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "number"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "handle": {
+                        "type": "string"
+                    },
+                    "iconURL": {
+                        "type": "string"
+                    },
+                    "bannerURL": {
+                        "type": "string"
+                    },
+                    "socialLinks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "link": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "owners": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "profileLayout": {
+                        "type": "object",
+                        "properties": {
+                            "widgets": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            },
+                            "layout": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "settings": {
+                        "type": "object",
+                        "properties": {
+                            "notifications": {
+                                "type": "object",
+                                "properties": {
+                                    "comment": {
+                                        "type": "string"
+                                    },
+                                    "follow": {
+                                        "type": "string"
+                                    },
+                                    "like": {
+                                        "type": "string"
+                                    },
+                                    "reply": {
+                                        "type": "string"
+                                    },
+                                    "rating": {
+                                        "type": "string"
+                                    },
+                                    "translation": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "following": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "followers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Leaderboard": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "scores": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "type": "string"
+                                },
+                                "handle": {
+                                    "type": "string"
+                                },
+                                "score": {
+                                    "type": "number"
+                                },
+                                "date": {
+                                    "type": "number"
+                                },
+                                "device": {
+                                    "type": "string"
+                                },
+                                "location": {
+                                    "type": "string"
+                                },
+                                "score_type": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Notification": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "date": {
+                        "type": "number"
+                    },
+                    "link": {
+                        "type": "string"
+                    },
+                    "read": {
+                        "type": "boolean"
+                    },
+                    "notified": {
+                        "type": "boolean"
+                    },
+                    "title": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "key": {
+                                        "type": "string"
+                                    },
+                                    "options": {}
+                                }
+                            }
+                        ]
+                    },
+                    "body": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "key": {
+                                        "type": "string"
+                                    },
+                                    "options": {}
+                                }
+                            }
+                        ]
+                    },
+                    "createdByUser": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/comments": {
+            "get": {
+                "summary": "Get comments",
+                "description": "Get all comments for a creation, or a creator's wall page.",
+                "tags": [
+                    "comments"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "content_type",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/CommentContentType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Comment"
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/comment/{id}": {
+            "get": {
+                "summary": "Get comment",
+                "description": "Get a comment by ID.",
+                "tags": [
+                    "comments"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete comment",
+                "description": "Delete a comment by ID.",
+                "tags": [
+                    "comments"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update comment",
+                "description": "Update a comment by ID.",
+                "tags": [
+                    "comments"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Comment"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/comment": {
+            "post": {
+                "summary": "Create comment",
+                "description": "Create a new comment.",
+                "tags": [
+                    "comments"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Comment"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/comment/{id}/like": {
+            "post": {
+                "summary": "Like comment",
+                "description": "Like a comment by ID.",
+                "tags": [
+                    "comments"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/comment/{id}/reply": {
+            "post": {
+                "summary": "Reply to comment",
+                "description": "Reply to a comment by ID.",
+                "tags": [
+                    "comments"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Comment"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/rate": {
+            "post": {
+                "summary": "Rate creation",
+                "description": "Rate a creation.",
+                "tags": [
+                    "creations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "rating": {
+                                        "type": "number"
+                                    },
+                                    "collection": {
+                                        "$ref": "#/components/schemas/CollectionName"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "number",
+                                    "description": "The new rating of the creation."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations": {
+            "get": {
+                "summary": "Get creations",
+                "description": "Search for creations.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "newest",
+                                "oldest",
+                                "updated",
+                                "title_ascending",
+                                "title_descending",
+                                "creator_ascending",
+                                "creator_descending",
+                                "highest_rated",
+                                "lowest_rated",
+                                "most_downloaded",
+                                "least_downloaded"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "enum": [
+                                0,
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    {
+                        "name": "exclusiveStatus",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "version",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "includeTags",
+                        "in": "query",
+                        "required": false,
+                        "description": "Comma separated list of tags to include.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "excludeTags",
+                        "in": "query",
+                        "required": false,
+                        "description": "Comma separated list of tags to exclude.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "creators",
+                        "in": "query",
+                        "required": false,
+                        "description": "Comma separated list of creators to include.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "contentType",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/SearchContentType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "documents": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Creation"
+                                                }
+                                            },
+                                            "totalCount": {
+                                                "type": "number"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/maps": {
+            "get": {
+                "summary": "Get maps",
+                "description": "Get maps using search queries. It is recommended to just use the /creations endpoint with a content_type.\n\nAs opposed to /creations, this endpoint fetches directly from the database rather than using search. That means that data could be more up to date, however the search will be more strict.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "newest",
+                                "oldest",
+                                "updated",
+                                "title_ascending",
+                                "title_descending",
+                                "creator_ascending",
+                                "creator_descending",
+                                "highest_rated",
+                                "lowest_rated",
+                                "most_downloaded",
+                                "least_downloaded"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "enum": [
+                                0,
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    {
+                        "name": "exclusiveStatus",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "version",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "includeTags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "excludeTags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "creator",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Creation"
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/datapacks": {
+            "get": {
+                "summary": "Get datapacks",
+                "description": "Get datapacks using search queries. It is recommended to just use the /creations endpoint with a content_type.\n\nAs opposed to /creations, this endpoint fetches directly from the database rather than using search. That means that data could be more up to date, however the search will be more strict.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "newest",
+                                "oldest",
+                                "updated",
+                                "title_ascending",
+                                "title_descending",
+                                "creator_ascending",
+                                "creator_descending",
+                                "highest_rated",
+                                "lowest_rated",
+                                "most_downloaded",
+                                "least_downloaded"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "enum": [
+                                0,
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    {
+                        "name": "exclusiveStatus",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "version",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "includeTags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "excludeTags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "creator",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Creation"
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/resourcepacks": {
+            "get": {
+                "summary": "Get resource packs",
+                "description": "Get resource packs using search queries. It is recommended to just use the /creations endpoint with a content_type.\n\nAs opposed to /creations, this endpoint fetches directly from the database rather than using search. That means that data could be more up to date, however the search will be more strict.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "newest",
+                                "oldest",
+                                "updated",
+                                "title_ascending",
+                                "title_descending",
+                                "creator_ascending",
+                                "creator_descending",
+                                "highest_rated",
+                                "lowest_rated",
+                                "most_downloaded",
+                                "least_downloaded"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "enum": [
+                                0,
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    {
+                        "name": "exclusiveStatus",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "version",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "includeTags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "excludeTags",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "creator",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Creation"
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/maps/{slug}": {
+            "get": {
+                "summary": "Get a map",
+                "description": "Get a map by slug. Sending a userJWT in the authorization header will allow access to that user's private maps.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Creation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/datapacks/{slug}": {
+            "get": {
+                "summary": "Get a datapack",
+                "description": "Get a datapack by slug. Sending a userJWT in the authorization header will allow access to that user's private datapacks.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Creation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/resourcepacks/{slug}": {
+            "get": {
+                "summary": "Get a resource pack",
+                "description": "Get a resource pack by slug. Sending a userJWT in the authorization header will allow access to that user's private resource packs.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Creation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/maps/{slug}/download": {
+            "get": {
+                "summary": "Download a map",
+                "description": "Download a map by slug.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/creations/datapacks/{slug}/download": {
+            "get": {
+                "summary": "Download a datapack",
+                "description": "Download a datapack by slug.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/creations/resourcepacks/{slug}/download": {
+            "get": {
+                "summary": "Download a resource pack",
+                "description": "Download a resource pack by slug.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/creations/tags/${type}": {
+            "get": {
+                "summary": "Get tags",
+                "description": "Get tags by content type.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/ContentType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/upload": {
+            "post": {
+                "summary": "Upload a creation",
+                "description": "Upload a creation. If a userJWT is passed to the authorization header, that user will automatically be added to the creators array and set as the owner. Otherwise, a key will be returned that can be used to access the creation for 24 hours.",
+                "tags": [
+                    "creations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Creation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "creation": {
+                                            "$ref": "#/components/schemas/Creation"
+                                        },
+                                        "key": {
+                                            "type": "string",
+                                            "description": "If the creation was uploaded without an account, this will be a temporary key to access the creation that will expire in 24 hours."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/import": {
+            "post": {
+                "summary": "Import a creation",
+                "description": "Import a creation from a URL. The URL must be to a site that we support for importing. Currently, we support importing from Planet Minecraft, MinecraftMaps and Modrinth. If a userJWT is passed to the authorization header, that user will automatically be added to the creators array and set as the owner. Otherwise, a key will be returned that can be used to access the creation for 24 hours.",
+                "tags": [
+                    "creations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "description": "The URL of the creation to import."
+                                    },
+                                    "type": {
+                                        "$ref": "#/components/schemas/ContentType"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sends a stream of events as the creation is being imported.",
+                        "content": {
+                            "text/event-stream": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/update": {
+            "post": {
+                "summary": "Update a creation",
+                "description": "Update a creation. The JWT of a user who is a creator or owner of the creation must be passed in the authorization header.",
+                "tags": [
+                    "creations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Creation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Creation"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/{slug}": {
+            "delete": {
+                "summary": "Delete a creation",
+                "description": "Delete a creation. The JWT of a user who is a creator or owner of the creation must be passed in the authorization header.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ContentType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/{slug}/request_approval": {
+            "get": {
+                "summary": "Request approval for a creation",
+                "description": "Request approval for a creation. The JWT of a user who is a creator or owner of the creation must be passed in the authorization header.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ContentType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/{slug}/approve": {
+            "get": {
+                "summary": "Approve a creation",
+                "description": "Approve a creation. The JWT of a user who is an admin must be passed in the authorization header.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ContentType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creations/{slug}/translate": {
+            "post": {
+                "summary": "Translate a creation",
+                "description": "Translate a creation. If a userJWT is passed to the authorization header that user will be added as the owner of the translation.",
+                "tags": [
+                    "creations"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "$ref": "#/components/schemas/ContentType"
+                                    },
+                                    "translation": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/creators/{handle}": {
+            "get": {
+                "summary": "Get a creator",
+                "description": "Get a creator by handle.",
+                "tags": [
+                    "creators"
+                ],
+                "parameters": [
+                    {
+                        "name": "handle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Creator"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creator/wall/{handle}": {
+            "get": {
+                "summary": "Get a creator's wall",
+                "description": "Get a creator's wall by handle.",
+                "tags": [
+                    "creators"
+                ],
+                "parameters": [
+                    {
+                        "name": "handle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Creation"
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/creator/follow/{handle}": {
+            "post": {
+                "summary": "Follow a creator",
+                "description": "Follow a creator by handle.",
+                "tags": [
+                    "creators"
+                ],
+                "parameters": [
+                    {
+                        "name": "handle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/creator/unfollow/{handle}": {
+            "post": {
+                "summary": "Unfollow a creator",
+                "description": "Unfollow a creator by handle.",
+                "tags": [
+                    "creators"
+                ],
+                "parameters": [
+                    {
+                        "name": "handle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/leaderboards/{type}/{slug}": {
+            "get": {
+                "summary": "Get a leaderboard",
+                "description": "Get a leaderboard by type and slug.",
+                "tags": [
+                    "leaderboards"
+                ],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Leaderboard"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Submit a score to a leaderboard",
+                "description": "Submit a score to a leaderboard. If the leaderboard does not exist, it will be created.",
+                "tags": [
+                    "leaderboards"
+                ],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "score": {
+                                        "type": "number"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "score_type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "summary": "Get notifications",
+                "description": "Get notifications.",
+                "tags": [
+                    "notifications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Notification"
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Read notifications",
+                "description": "Read notifications.",
+                "tags": [
+                    "notifications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/notifications/{id}": {
+            "patch": {
+                "summary": "Read a notification",
+                "description": "Read a notification by id.",
+                "tags": [
+                    "notifications"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Notification"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a notification",
+                "description": "Delete a notification by id.",
+                "tags": [
+                    "notifications"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/notifications/subscribe": {
+            "post": {
+                "summary": "Subscribe to notifications",
+                "description": "Subscribe to notifications.",
+                "tags": [
+                    "notifications"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "endpoint": {
+                                        "type": "string"
+                                    },
+                                    "expirationTime": {
+                                        "type": "number"
+                                    },
+                                    "keys": {
+                                        "type": "object",
+                                        "properties": {
+                                            "auth": {
+                                                "type": "string"
+                                            },
+                                            "p256dh": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/upload": {
+            "post": {
+                "summary": "Upload a file",
+                "description": "Upload a file.",
+                "tags": [
+                    "storage"
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "files": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "location": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/translation/{lang}/{key}": {
+            "get": {
+                "summary": "Get a translation",
+                "description": "Get a translation key in a specific language.",
+                "tags": [
+                    "translation"
+                ],
+                "parameters": [
+                    {
+                        "name": "lang",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/translation/{lang}": {
+            "get": {
+                "summary": "Get translations",
+                "description": "Get translations for a language.",
+                "tags": [
+                    "translation"
+                ],
+                "parameters": [
+                    {
+                        "name": "lang",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Update a translation",
+                "description": "Update a translation. Will create the translation if it doesn't exist.",
+                "tags": [
+                    "translation"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/translation/{lang}/approve": {
+            "put": {
+                "summary": "Approve a translation",
+                "description": "Approve a translation.",
+                "tags": [
+                    "translation"
+                ],
+                "parameters": [
+                    {
+                        "name": "lang",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "summary": "Get a user",
+                "description": "Get a user by from the JWT in the authorization header.",
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Creator"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a user",
+                "description": "Delete a user.",
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/settings": {
+            "get": {
+                "summary": "Get user settings",
+                "description": "Get user settings.",
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/updateProfile": {
+            "post": {
+                "summary": "Update user profile",
+                "description": "Update user profile.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "type": "string"
+                                    },
+                                    "banner": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/updateProfileLayout": {
+            "post": {
+                "summary": "Update user profile layout",
+                "description": "Update user profile layout.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/updateSettings": {
+            "post": {
+                "summary": "Update user settings",
+                "description": "Update user settings.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/updateHandle": {
+            "post": {
+                "summary": "Update user handle",
+                "description": "Update user handle.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "handle": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/updateEmail": {
+            "post": {
+                "summary": "Update user email",
+                "description": "Update user email.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/updatePassword": {
+            "post": {
+                "summary": "Update user password",
+                "description": "Update user password.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/forgotPassword": {
+            "post": {
+                "summary": "Forgot password",
+                "description": "Forgot password.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/user/providers": {
+            "post": {
+                "summary": "Add a provider",
+                "description": "Add a provider.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "provider": {
+                                        "type": "number"
+                                    },
+                                    "code": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a provider",
+                "description": "Delete a provider.",
+                "tags": [
+                    "user"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "provider": {
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/ErrorSchema"
+                    }
+                }
+            }
+        },
+        "/feed": {
+            "get": {
+                "summary": "Get a user feed",
+                "description": "Get a user feed.",
+                "tags": [
+                    "feed"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "documents": {
+                                            "type": "array",
+                                            "items": {
+                                                "anyOf": [
+                                                    {
+                                                        "$ref": "#/components/schemas/Creation"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/Comment"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "totalCount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
